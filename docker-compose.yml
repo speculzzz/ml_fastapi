@@ -1,0 +1,7 @@
+services:
+  ml-api:
+    image: ml-fastapi-app
+    build: .
+    ports:
+      - "80:8000"
+    restart: unless-stopped

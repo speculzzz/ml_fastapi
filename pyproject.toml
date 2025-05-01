@@ -1,0 +1,54 @@
+[project]
+name = "ml_fastapi"
+version = "0.1.0"
+description = "FastAPI service for ML model inference"
+authors = [
+    {name = "speculzzz", email = "speculzzz@gmail.com"}
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.12",
+    "uvicorn>=0.34.2",
+    "scikit-learn>=1.6.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pylint>=3.3.6",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "httpx>=0.28.1",
+    "black>=25.1.0",
+    "matplotlib>=3.10.1"
+]
+
+[build-system]
+requires = ["setuptools>=65.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pylint.master]
+load-plugins = "pylint.extensions.mccabe"
+extension-pkg-whitelist = ["pydantic"]
+ignore-paths = [
+    ".venv"
+]
+disable = [
+    "missing-module-docstring",   # C0114
+    "missing-class-docstring",    # C0115
+    "missing-function-docstring", # C0116
+    "too-few-public-methods",     # R0903
+    "fixme"                       # W0511
+]
+
+[tool.pylint.basic]
+good-names = ["app", "model", "features"]
+
+[tool.pylint.messages_control]
+disable = [
+    "too-few-public-methods",
+    "import-error",
+    "no-name-in-module"
+]
+
+[tool.pylint.format]
+max-line-length = 120
