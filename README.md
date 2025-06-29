@@ -1,11 +1,17 @@
-# FastAPI ML Model Service
+# FastAPI ML Model Service with Keycloak Auth
 
-A lightweight REST API for machine learning model inference built with FastAPI, Docker, and modern Python tooling.  
-It is a part of Homework 9 for the OTUS course and is intended for educational purposes.
+A lightweight REST API for machine learning model inference built with FastAPI, Docker,  
+JWT authentication via Keycloak and modern Python tooling.  
+It is a part of Homeworks 9-10 for the OTUS course and is intended for educational purposes.
 
 ## Features
 
 - 🚀 FastAPI-powered REST endpoints
+- 🔑 JWT Authentication: Integrated with Keycloak
+- 🧑‍💻 Role-Based Access:
+  - `user` role → `/predict`
+  - `admin` role → `/admin`
+  - `admin` or `user` role → `/flexible`
 - 📦 Docker containerization
 - ✅ Pytest with coverage reporting
 - 🔍 Pylint code quality checks
@@ -17,6 +23,7 @@ It is a part of Homework 9 for the OTUS course and is intended for educational p
 
 - Python 3.12+
 - Docker 20.10+
+- Keycloak server 26+
 
 ### Installation
 
@@ -37,6 +44,47 @@ make run
 
 # Production mode with Docker
 make build && make up
+```
+
+### Keycloak Configuration
+1. Create realm test-realm
+2. Create clients:
+   ml-fastapi (confidential)
+   admin-fastapi (confidential, for admin access)
+3. Create roles: admin, user
+4. Assign roles to users
+
+## Authentication
+
+### Protected Endpoints
+
+| Endpoint | Role Required | Description         |
+|----------|---------------|---------------------|
+| /predict | user	        | Iris classification |
+| /admin   | admin         | Admin dashboard     | 
+| /login   | -             | Get JWT tokens      |
+
+### API Endpoints
+
+_Get Access Token_
+```bash
+curl -X POST http://localhost:8000/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "user1", "password": "pass1"}'
+```
+
+_Make Prediction (User)_
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}'
+```
+
+_Access Admin information_
+```bash
+curl -X GET http://localhost:8000/admin \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
 ```
 
 ## Project Structure

@@ -1,7 +1,44 @@
 services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: testkeycloakdb
+      POSTGRES_USER: testkeycloakuser
+      POSTGRES_PASSWORD: testkeycloakpassword
+    restart: always
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    command: start-dev
+    depends_on:
+      - postgres
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: testkeycloakdb
+      DB_USER: testkeycloakuser
+      DB_SCHEMA: public
+      DB_PASSWORD: testkeycloakpassword
+      KEYCLOAK_USER: keycloakuser
+      KEYCLOAK_PASSWORD: keycloakpassword
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_LOGLEVEL: DEBUG
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    restart: always
+
   ml-api:
     image: ml-fastapi-app
     build: .
+    depends_on:
+      - keycloak
     ports:
-      - "80:8000"
+      - "8000:8000"
     restart: unless-stopped
+
+volumes:
+  keycloak_data:

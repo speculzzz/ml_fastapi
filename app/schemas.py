@@ -13,3 +13,9 @@ class PredictionOutput(BaseModel):
     """Scheme for a prediction."""
     class_id: int
     class_name: str
+
+
+class UserLogin(BaseModel):
+    """Scheme for a credential"""
+    username: str
+    password: str
